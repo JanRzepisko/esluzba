@@ -4,6 +4,8 @@ using System.Text.Json.Serialization;
 using esluzba.DataAccess.Abstract;
 using esluzba.DataAccess.DbContexts;
 using esluzba.Jwt;
+using esluzba.Services.Admin;
+using esluzba.Services.UserService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -22,6 +24,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddAuthorization();
 builder.Services.AddSingleton<IJwtAuth, JwtAuth>();
+builder.Services.AddScoped<IAdminServices, AdminService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddDbContext<UserContext>(options => options.UseNpgsql(builder.Configuration["ConnectionString"]!)); 
 builder.Services.AddScoped<IUnitOfWork, UserContext>();

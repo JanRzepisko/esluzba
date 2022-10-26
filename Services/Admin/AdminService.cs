@@ -3,6 +3,7 @@ using esluzba.DataAccess.Entities;
 using esluzba.Enums;
 using esluzba.Jwt;
 using esluzba.Models;
+using Microsoft.AspNetCore.Mvc;
 using Conflict = esluzba.Exceptions.Conflict;
 
 namespace esluzba.Services.Admin;
@@ -18,34 +19,37 @@ public class AdminService : IAdminServices
         _jwtAuth = jwtAuth;
     }
     
-    public async Task<object> Login(string username, string password, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Login(string username, string password, CancellationToken cancellationToken = default)
     {
         var exist = await _unitOfWork.Parishes.IsLoginExistAsync(username, cancellationToken);
         if (!exist)
         {
-            throw new Conflict("Username or password is incorrect", StatusCodes.Status409Conflict);
+            throw new Conflict("Username is incorrect");
         }
         Parish parish = await  _unitOfWork.Parishes.GetByLogin(username, cancellationToken);
         
-        if(password == BCrypt.Net.BCrypt.HashPassword(password, parish.PasswordHash))
+        if(!BCrypt.Net.BCrypt.Verify(password, parish.PasswordHash))
         {
-            return parish;
+            throw new Conflict("Password is incorrect");
         }
 
         string jwt = await _jwtAuth.GenerateJwt(parish.Id, JwtPolicies.Admin);
 
         parish.PasswordHash = string.Empty;
         
-        return new{
-            parish,jwt
-        };
+        return new OkObjectResult(new
+        {
+            parish,
+            jwt
+        });
     }
     
-    public async Task<Parish> Register(Parish parish, CancellationToken cancellationToken = default)
+    //TODO: mail email password to parish 
+    public async Task<IActionResult> Register(Parish parish, CancellationToken cancellationToken = default)
     {
         await _unitOfWork.Parishes.AddAsync(parish, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-        return parish;
+        return new OkObjectResult(parish);
     }
 
     public async Task<Parish> Update(Parish parish, CancellationToken cancellationToken = default)

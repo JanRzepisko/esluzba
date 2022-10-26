@@ -3,11 +3,10 @@ namespace esluzba.Exceptions;
 public class Conflict : Exception
 {
     public override string Message { get; }
-    int StatusCode { get; set; }
+    public const int StatusCode = 409;
     
-    public Conflict(string message, int code) : base(message)
+    public Conflict(string message) : base(message)
     {
         Message = message;
-        StatusCode = code;
     }
 }

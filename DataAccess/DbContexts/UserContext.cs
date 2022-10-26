@@ -3,6 +3,7 @@ using esluzba.DataAccess.Entities;
 using esluzba.DataAccess.Repository.AttendanceRepository;
 using esluzba.DataAccess.Repository.BaseRepository;
 using esluzba.DataAccess.Repository.ParishRepository;
+using esluzba.DataAccess.Repository.ServiceRepository;
 using Microsoft.EntityFrameworkCore;
 
 namespace esluzba.DataAccess.DbContexts;
@@ -21,6 +22,6 @@ public class UserContext : DbContext, IUnitOfWork
     public IBaseRepository<User> Users => new BaseRepository<User>(_Users);
     public IParishRepository Parishes => new ParishRepository(_Parishes);
     public IBaseRepository<UserServicesRelation> UserServicesRelations => new BaseRepository<UserServicesRelation>(_UserServicesRelation);
-    public IBaseRepository<Service> Services => new BaseRepository<Service>(_Services);
+    public IServiceRepository Services => new ServiceRepository(_Services);
     public IAttendanceRepository Attendances => new AttendanceRepository(_Attendances);
 }

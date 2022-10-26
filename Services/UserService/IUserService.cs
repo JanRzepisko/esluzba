@@ -2,5 +2,5 @@ namespace esluzba.Services.UserService;
 
 public interface IUserService
 {
-    public Task AttestPresence(string fingerprint);
+    public Task AttestPresence(Guid id, string date, CancellationToken cancellationToken = default);
 }
